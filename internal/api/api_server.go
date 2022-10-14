@@ -9,6 +9,9 @@ import (
 	"net/http"
 	"path"
 	"time"
+	"os"
+	"path/filepath"
+
 )
 
 import (
@@ -55,7 +58,14 @@ func getRedirectToRealUrl(w http.ResponseWriter, r *http.Request) {
 	if data != nil {
 		http.Redirect(w, r, fmt.Sprintf("http://%s", data.RealUrl), http.StatusSeeOther)
 	} else {
-		http.NotFound(w, r)
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.WriteHeader(http.StatusNotFound)
+		wd, err := os.Getwd()
+		if err != nil {
+			panic(err)
+		}
+		notFoundHtml := filepath.Join(wd, "static/404/404.html")
+		http.ServeFile(w, r, notFoundHtml)
 	}
 }
 
@@ -100,11 +110,16 @@ func postCrateShortUrl(w http.ResponseWriter, r *http.Request) {
 func initApiHandler(router *mux.Router) {
 	api := router.PathPrefix("/api/v1").Subrouter()
 	api.HandleFunc("", postCrateShortUrl).Methods(http.MethodPost)
-	api.HandleFunc("/{key}", getRedirectToRealUrl).Methods(http.MethodGet)
+}
+
+func initFrontendHandler(router *mux.Router) {
+	frontend := router
+	frontend.HandleFunc("/{key}", getRedirectToRealUrl).Methods(http.MethodGet)
 }
 
 func InitServer(addr string, port string) {
 	router := mux.NewRouter()
+	initFrontendHandler(router)
 	initApiHandler(router)
 
 	server := &http.Server{
