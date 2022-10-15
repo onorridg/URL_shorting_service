@@ -7,7 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"path"
+	//"path"
 	"time"
 	"os"
 	"path/filepath"
@@ -26,6 +26,8 @@ import (
 type RequestBody struct {
 	Url string `json:"url"`
 }
+
+var HOSTNAME string
 
 func bodyUrl(r *http.Request) string {
 	b, err := io.ReadAll(r.Body)
@@ -50,16 +52,13 @@ func realUrlExist(realUrl string, database *sql.DB) *db.DataRow {
 }
 
 func getRedirectToRealUrl(w http.ResponseWriter, r *http.Request) {
-	urlPath := path.Base(r.URL.Path)
-	fmt.Println(urlPath)
+	shortUrl := mux.Vars(r)["short_url"]
 	database := db.OpenDB()
 	defer database.Close()
-	data := db.GetRow(db.SHORTURL, urlPath, database)
+	data := db.GetRow(db.SHORTURL, shortUrl, database)
 	if data != nil {
 		http.Redirect(w, r, fmt.Sprintf("http://%s", data.RealUrl), http.StatusSeeOther)
 	} else {
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.WriteHeader(http.StatusNotFound)
 		wd, err := os.Getwd()
 		if err != nil {
 			panic(err)
@@ -84,8 +83,8 @@ func postCrateShortUrl(w http.ResponseWriter, r *http.Request) {
 	existUrl := realUrlExist(realUrl, database)
 	if existUrl != nil {
 		w.WriteHeader(http.StatusOK)
-		result := fmt.Sprintf("{\"short_url\": \"%s\", \"real_url\": \"%s\"}",
-			existUrl.ShortUrl, existUrl.RealUrl)
+		result := fmt.Sprintf("{\"short_url\": \"%s/%s\", \"real_url\": \"%s\"}",
+								HOSTNAME, existUrl.ShortUrl, existUrl.RealUrl)
 		w.Write([]byte(result))
 		return
 	}
@@ -102,8 +101,8 @@ func postCrateShortUrl(w http.ResponseWriter, r *http.Request) {
 	db.InsertRow(realUrl, shortUrl, database)
 
 	w.WriteHeader(http.StatusCreated)
-	result := fmt.Sprintf("{\"short_url\": \"%s\", \"real_url\": \"%s\"}",
-		shortUrl, realUrl)
+	result := fmt.Sprintf("{\"short_url\": \"%s/%s\", \"real_url\": \"%s\"}",
+							HOSTNAME, shortUrl, realUrl)
 	w.Write([]byte(result))
 }
 
@@ -114,10 +113,12 @@ func initApiHandler(router *mux.Router) {
 
 func initFrontendHandler(router *mux.Router) {
 	frontend := router
-	frontend.HandleFunc("/{key}", getRedirectToRealUrl).Methods(http.MethodGet)
+	frontend.HandleFunc("/{short_url}", getRedirectToRealUrl).Methods(http.MethodGet)
 }
 
 func InitServer(addr string, port string) {
+	HOSTNAME = os.Getenv("HOSTNAME")
+
 	router := mux.NewRouter()
 	initFrontendHandler(router)
 	initApiHandler(router)
