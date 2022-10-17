@@ -118,17 +118,14 @@ func initFrontendHandler(router *mux.Router) {
 }
 
 func InitServer() {
-	HOSTNAME = os.Getenv("HOSTNAME")
 	API_PORT = os.Getenv("API_PORT")
-
 	router := mux.NewRouter()
-	//router.Host(HOSTNAME)
 	initFrontendHandler(router)
 	initApiHandler(router)
 
 	server := &http.Server{
 		Handler:      router,
-		Addr:         "localhost:" + API_PORT,
+		Addr:         ":" + API_PORT,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
