@@ -128,7 +128,7 @@ func InitServer() {
 
 	server := &http.Server{
 		Handler:      router,
-		Addr:         "localhost:" + API_PORT,
+		Addr:         "0.0.0.0:" + API_PORT,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
