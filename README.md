@@ -49,3 +49,7 @@ GET /CfjShSb9FO
 ||
 500: Internal Server Error
 ```
+Протестировать API:
+```python
+https://uss.onorridg.tech/
+```
