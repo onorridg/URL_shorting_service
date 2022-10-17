@@ -119,6 +119,7 @@ func initFrontendHandler(router *mux.Router) {
 
 func InitServer() {
 	API_PORT = os.Getenv("API_PORT")
+	HOSTNAME = os.Getenv("HOST_NAME")
 	router := mux.NewRouter()
 	initFrontendHandler(router)
 	initApiHandler(router)
