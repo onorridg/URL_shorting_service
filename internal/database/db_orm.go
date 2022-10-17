@@ -50,8 +50,8 @@ func GetRow(column string, str string, db *sql.DB) *DataRow {
 }
 
 func createDBandTable() {
-	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s sslmode=disable",
-								PG_HOST, PG_PASSWORD, PG_USER, PG_PASSWORD)
+	connStr := fmt.Sprintf("postgres://%v:%v@%v:%v?sslmode=disable",
+								PG_USER, PG_PASSWORD,PG_HOST,PG_PORT)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		panic(err)
@@ -69,8 +69,9 @@ func createDBandTable() {
 		}
 	}
 	db.Close()
-	command = fmt.Sprintf("%s dbname=%s", connStr, PG_DB_NAME)
-	db, err = sql.Open("postgres", command)
+	connStr = fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
+							PG_USER, PG_PASSWORD,PG_HOST,PG_PORT, PG_DB_NAME)
+	db, err = sql.Open("postgres", connStr)
 	if err != nil {
 		panic(err)
 	}
@@ -84,8 +85,8 @@ func createDBandTable() {
 }
 
 func OpenDB() *sql.DB {
-	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s sslmode=disable dbname=%s",
-								PG_HOST, PG_PORT, PG_USER, PG_PASSWORD, PG_DB_NAME)
+	connStr := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
+							PG_USER, PG_PASSWORD,PG_HOST,PG_PORT, PG_DB_NAME)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		panic(err)

@@ -1,0 +1,6 @@
+FROM alpine
+COPY url-shorting-service .
+COPY .env .
+COPY static static
+EXPOSE 8080 8080
+CMD [ "./url-shorting-service" ]
