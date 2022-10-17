@@ -122,13 +122,13 @@ func InitServer() {
 	API_PORT = os.Getenv("API_PORT")
 
 	router := mux.NewRouter()
-	router.Host(HOSTNAME)
+	//router.Host(HOSTNAME)
 	initFrontendHandler(router)
 	initApiHandler(router)
 
 	server := &http.Server{
 		Handler:      router,
-		Addr:         "0.0.0.0:" + API_PORT,
+		Addr:         "localhost:" + API_PORT,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
