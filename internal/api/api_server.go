@@ -28,6 +28,7 @@ type RequestBody struct {
 }
 
 var HOSTNAME string
+var API_PORT string
 
 func bodyUrl(r *http.Request) string {
 	b, err := io.ReadAll(r.Body)
@@ -116,16 +117,18 @@ func initFrontendHandler(router *mux.Router) {
 	frontend.HandleFunc("/{short_url}", getRedirectToRealUrl).Methods(http.MethodGet)
 }
 
-func InitServer(addr string, port string) {
+func InitServer() {
 	HOSTNAME = os.Getenv("HOSTNAME")
+	API_PORT = os.Getenv("API_PORT")
 
 	router := mux.NewRouter()
+	router.Host(HOSTNAME)
 	initFrontendHandler(router)
 	initApiHandler(router)
 
 	server := &http.Server{
 		Handler:      router,
-		Addr:         addr + ":" + port,
+		Addr:         "localhost:" + API_PORT,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}

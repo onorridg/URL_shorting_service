@@ -1,5 +1,12 @@
-FROM alpine
-COPY url-shorting-service .
+FROM golang:1.18.5-alpine3.15 as builder
+WORKDIR /app
+COPY . .
+RUN go mod download
+RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o url-shorting-service ./cmd/main.go
+
+FROM scratch
+WORKDIR /app 
+COPY --from=builder /app/url-shorting-service .
 COPY .env .
 COPY static static
 EXPOSE 8080 8080
