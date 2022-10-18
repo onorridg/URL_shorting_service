@@ -7,19 +7,16 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
+
 	//"path"
-	"time"
 	"os"
 	"path/filepath"
+	"time"
 
-)
-
-import (
 	db "main/internal/database"
 	"main/utils"
-)
 
-import (
 	"github.com/gorilla/mux"
 )
 
@@ -76,6 +73,13 @@ func postCrateShortUrl(w http.ResponseWriter, r *http.Request) {
 	defer database.Close()
 
 	realUrl := bodyUrl(r)
+	if strings.HasPrefix(realUrl, "https://") || strings.HasPrefix(realUrl, "http://"){
+		if result := strings.Split(realUrl, "//"); len(result) == 2{
+			realUrl = result[1]
+		} else {
+			realUrl = ""
+		} 
+	}
 	if realUrl == "" {
 		http.Error(w, fmt.Sprintf("wrong real URL: %s", realUrl), 500)
 		return
