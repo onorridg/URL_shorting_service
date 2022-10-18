@@ -73,12 +73,12 @@ func postCrateShortUrl(w http.ResponseWriter, r *http.Request) {
 	defer database.Close()
 
 	realUrl := bodyUrl(r)
-	if strings.HasPrefix(realUrl, "https://") || strings.HasPrefix(realUrl, "http://"){
-		if result := strings.Split(realUrl, "//"); len(result) == 2{
+	if strings.HasPrefix(realUrl, "https://") || strings.HasPrefix(realUrl, "http://") {
+		if result := strings.Split(realUrl, "//"); len(result) == 2 {
 			realUrl = result[1]
 		} else {
 			realUrl = ""
-		} 
+		}
 	}
 	if realUrl == "" {
 		http.Error(w, fmt.Sprintf("wrong real URL: %s", realUrl), 500)
@@ -89,7 +89,7 @@ func postCrateShortUrl(w http.ResponseWriter, r *http.Request) {
 	if existUrl != nil {
 		w.WriteHeader(http.StatusOK)
 		result := fmt.Sprintf("{\"short_url\": \"%s/%s\", \"real_url\": \"%s\"}",
-								HOSTNAME, existUrl.ShortUrl, existUrl.RealUrl)
+			HOSTNAME, existUrl.ShortUrl, existUrl.RealUrl)
 		w.Write([]byte(result))
 		return
 	}
@@ -107,7 +107,7 @@ func postCrateShortUrl(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	result := fmt.Sprintf("{\"short_url\": \"%s/%s\", \"real_url\": \"%s\"}",
-							HOSTNAME, shortUrl, realUrl)
+		HOSTNAME, shortUrl, realUrl)
 	w.Write([]byte(result))
 }
 

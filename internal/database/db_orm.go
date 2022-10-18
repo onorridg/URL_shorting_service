@@ -34,14 +34,14 @@ type DataRow struct {
 
 func InsertRow(realUrl, shortUrl string, db *sql.DB) {
 	q := fmt.Sprintf("insert into %s values(default, '%s', '%s')",
-						PG_DB_TABLE_NAME, realUrl, shortUrl)
+		PG_DB_TABLE_NAME, realUrl, shortUrl)
 	if _, err := db.Exec(q); err != nil {
 		log.Println(err)
 	}
 }
 
 func GetRow(column string, str string, db *sql.DB) *DataRow {
-	q := fmt.Sprintf("select * from %s where %s = '%s'",PG_DB_TABLE_NAME, column, str)
+	q := fmt.Sprintf("select * from %s where %s = '%s'", PG_DB_TABLE_NAME, column, str)
 	d := new(DataRow)
 	if err := db.QueryRow(q).Scan(&d.Id, &d.RealUrl, &d.ShortUrl); err != nil {
 		return nil
@@ -51,7 +51,7 @@ func GetRow(column string, str string, db *sql.DB) *DataRow {
 
 func createDBandTable() {
 	connStr := fmt.Sprintf("postgres://%v:%v@%v:%v?sslmode=disable",
-								PG_USER, PG_PASSWORD,PG_HOST,PG_PORT)
+		PG_USER, PG_PASSWORD, PG_HOST, PG_PORT)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		panic(err)
@@ -70,14 +70,14 @@ func createDBandTable() {
 	}
 	db.Close()
 	connStr = fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
-							PG_USER, PG_PASSWORD,PG_HOST,PG_PORT, PG_DB_NAME)
+		PG_USER, PG_PASSWORD, PG_HOST, PG_PORT, PG_DB_NAME)
 	db, err = sql.Open("postgres", connStr)
 	if err != nil {
 		panic(err)
 	}
-	createBbTable := fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s (id SERIAL PRIMARY KEY, " + 
-									"%s TEXT UNIQUE, %s CHAR(10) UNIQUE)",
-									PG_DB_TABLE_NAME, REALURL, SHORTURL)
+	createBbTable := fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s (id SERIAL PRIMARY KEY, "+
+		"%s TEXT UNIQUE, %s CHAR(10) UNIQUE)",
+		PG_DB_TABLE_NAME, REALURL, SHORTURL)
 	if _, err = db.Exec(createBbTable); err != nil {
 		log.Fatal(err)
 	}
@@ -86,7 +86,7 @@ func createDBandTable() {
 
 func OpenDB() *sql.DB {
 	connStr := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
-							PG_USER, PG_PASSWORD,PG_HOST,PG_PORT, PG_DB_NAME)
+		PG_USER, PG_PASSWORD, PG_HOST, PG_PORT, PG_DB_NAME)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		panic(err)
