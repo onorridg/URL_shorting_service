@@ -33,17 +33,17 @@ type DataRow struct {
 }
 
 func InsertRow(realUrl, shortUrl string, db *sql.DB) {
-	q := fmt.Sprintf("insert into %s values(default, '%s', '%s')",
-		PG_DB_TABLE_NAME, realUrl, shortUrl)
-	if _, err := db.Exec(q); err != nil {
+	q := fmt.Sprintf("insert into %s values(default, $1, '%s')",
+		PG_DB_TABLE_NAME, shortUrl)
+	if _, err := db.Exec(q, realUrl); err != nil {
 		log.Println(err)
 	}
 }
 
 func GetRow(column string, str string, db *sql.DB) *DataRow {
-	q := fmt.Sprintf("select * from %s where %s = '%s'", PG_DB_TABLE_NAME, column, str)
+	q := fmt.Sprintf("select * from %s where %s = $1", PG_DB_TABLE_NAME, column)
 	d := new(DataRow)
-	if err := db.QueryRow(q).Scan(&d.Id, &d.RealUrl, &d.ShortUrl); err != nil {
+	if err := db.QueryRow(q, str).Scan(&d.Id, &d.RealUrl, &d.ShortUrl); err != nil {
 		return nil
 	}
 	return d
