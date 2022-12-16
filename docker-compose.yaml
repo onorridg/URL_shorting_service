@@ -9,7 +9,7 @@ services:
       depends_on:
         - pgsql
       ports:
-        - "8080:8080"
+        - "${API_PORT}:${API_PORT}"
   pgsql:
     image: postgres:latest
     restart: on-failure:5

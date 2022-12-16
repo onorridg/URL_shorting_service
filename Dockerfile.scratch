@@ -9,5 +9,5 @@ WORKDIR /app
 COPY --from=builder /app/url-shorting-service .
 COPY .env .
 COPY static static
-EXPOSE 8080 8080
+EXPOSE "${API_PORT}" "${API_PORT}"
 CMD [ "./url-shorting-service" ]
