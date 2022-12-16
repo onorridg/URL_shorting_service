@@ -9,6 +9,7 @@ PG_PASSWORD=postgres
 PG_DB_NAME=urldb
 PG_DB_TABLE_NAME=urls
 HOSTNAME=localhost:8080
+API_PORT=8080
 ```
 
 #### Команды Makefile
